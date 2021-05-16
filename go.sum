@@ -1,0 +1,4 @@
+github.com/adrianleh/WTMP-middleend v0.0.0-20210515004351-7b00038ca569 h1:zKpyU+pBzadEQELT4w5sgNiUHv/r2NYgjA/zALsV9mY=
+github.com/adrianleh/WTMP-middleend v0.0.0-20210515004351-7b00038ca569/go.mod h1:g796wxcjnpyaFF32KXmWoMI4XvYnPCZw0sQ8W9ZL3x4=
+github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
+github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
