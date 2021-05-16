@@ -2,34 +2,14 @@ package clientlib
 
 import (
 	"bytes"
-	"encoding/binary"
 	"errors"
 	"fmt"
 	"github.com/adrianleh/WTMP-middleend/command"
 	"github.com/adrianleh/WTMP-middleend/types"
-	"github.com/google/uuid"
 	"io"
-	"net"
 	"reflect"
 	"strings"
 )
-
-const svSockPath = "/tmp/wtmp.sock"
-
-var uuid_ = uuid.Nil
-
-func sendViaSocket(data *[]byte) error {
-	c, sockErr := net.Dial("unix", svSockPath)
-	if sockErr != nil {
-		return sockErr
-	}
-	_, sendErr := c.Write(*data)
-	return sendErr
-}
-
-func writeBE(data interface{}, out io.Writer) error {
-	return binary.Write(out, binary.BigEndian, data)
-}
 
 var type2Type = map[reflect.Kind]string{
 	reflect.Uint16:  "Char",
@@ -141,20 +121,6 @@ func serializeArray(typ types.ArrayType, array_ interface{}, out io.Writer) erro
 		}
 	}
 	return nil
-}
-
-func writeCommandHeader(commandCode uint8, size uint64, out io.Writer) error {
-	if uuid_ == uuid.Nil {
-		return errors.New("attempt to issue command but uuid has not been set")
-	}
-	if _, err := out.Write(uuid_[:]); err != nil {
-		return err
-	}
-	commandBytes := []byte{commandCode}
-	if _, err := out.Write(commandBytes); err != nil {
-		return err
-	}
-	return writeBE(size, out)
 }
 
 // Send NOTE: The client does not permit a union over multiple structs or multiple arrays -
