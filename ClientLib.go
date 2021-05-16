@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"github.com/adrianleh/WTMP-middleend/command"
 	"github.com/adrianleh/WTMP-middleend/types"
+	"github.com/google/uuid"
 	"io"
 	"net"
 	"reflect"
@@ -14,6 +15,8 @@ import (
 )
 
 const svSockPath = "/tmp/wtmp.sock"
+
+var uuid_ = uuid.Nil
 
 func sendViaSocket(data *[]byte) error {
 	c, sockErr := net.Dial("unix", svSockPath)
@@ -140,17 +143,11 @@ func serializeArray(typ types.ArrayType, array_ interface{}, out io.Writer) erro
 	return nil
 }
 
-func getUUID() TODO {
-	return TODO
-}
-
-func writeUUID() error {
-	return TODO
-}
-
 func writeCommandHeader(commandCode uint8, size uint64, out io.Writer) error {
-	uuid := getUUID()
-	if err := writeUUID(uuid, out); err != nil {
+	if uuid_ == uuid.Nil {
+		return errors.New("attempt to issue command but uuid has not been set")
+	}
+	if _, err := out.Write(uuid_[:]); err != nil {
 		return err
 	}
 	commandBytes := []byte{commandCode}
