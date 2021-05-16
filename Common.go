@@ -6,11 +6,15 @@ import (
 	"github.com/google/uuid"
 	"io"
 	"net"
+	"sync"
 )
 
 const svSockPath = "/tmp/wtmp.sock"
 
 var uuid_ = uuid.Nil
+var recvConn net.Conn = nil
+var recvConnLock sync.Mutex
+var recvConnCond sync.Cond
 
 func sendViaSocket(data *[]byte) error {
 	c, sockErr := net.Dial("unix", svSockPath)
