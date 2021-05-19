@@ -2,6 +2,7 @@ package clientlib
 
 import (
 	"bytes"
+	"encoding/binary"
 	"errors"
 	"fmt"
 	"github.com/adrianleh/WTMP-middleend/command"
@@ -21,6 +22,10 @@ var type2Type = map[reflect.Kind]string{
 	reflect.Struct:  "Struct",
 	reflect.Array:   "Array",
 	reflect.Slice:   "Array",
+}
+
+func writeBE(data interface{}, out io.Writer) error {
+	return binary.Write(out, binary.BigEndian, data)
 }
 
 func checkValidUnion(unionType types.UnionType) error {
@@ -132,11 +137,13 @@ func Send(typ types.Type, target string, msg interface{}) error {
 	typeSer := typ.Serialize()
 	msgSize := typ.Size()
 	size := uint64(4+4+len(target)+len(typeSer)) + msgSize
-	bufInit := make([]byte, 0, 25+size)
-	out := bytes.NewBuffer(bufInit)
-	if err := writeCommandHeader(command.SendCommandId, size, out); err != nil {
-		return err
+
+	headerBytes, headerErr := makeCommandHeader(command.SendCommandId, size)
+	if headerErr != nil {
+		return headerErr
 	}
+
+	out := bytes.NewBuffer(headerBytes)
 	if err := writeBE(uint32(len(target)), out); err != nil {
 		return err
 	}
@@ -152,6 +159,5 @@ func Send(typ types.Type, target string, msg interface{}) error {
 	if err := serialize(typ, msg, out); err != nil {
 		return err
 	}
-	outBytes := out.Bytes()
-	return sendViaSocket(&outBytes)
+	return sendViaSocket(out.Bytes())
 }

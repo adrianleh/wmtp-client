@@ -4,7 +4,6 @@ import (
 	"encoding/binary"
 	"errors"
 	"github.com/google/uuid"
-	"io"
 	"net"
 	"sync"
 )
@@ -16,29 +15,24 @@ var recvConn net.Conn = nil
 var recvConnLock sync.Mutex
 var recvConnCond sync.Cond
 
-func sendViaSocket(data *[]byte) error {
+func sendViaSocket(data []byte) error {
 	c, sockErr := net.Dial("unix", svSockPath)
 	if sockErr != nil {
 		return sockErr
 	}
-	_, sendErr := c.Write(*data)
+	_, sendErr := c.Write(data)
 	return sendErr
 }
 
-func writeBE(data interface{}, out io.Writer) error {
-	return binary.Write(out, binary.BigEndian, data)
-}
-
-func writeCommandHeader(commandCode uint8, size uint64, out io.Writer) error {
+func makeCommandHeader(commandCode uint8, size uint64) ([]byte, error) {
 	if uuid_ == uuid.Nil {
-		return errors.New("attempt to issue command but uuid has not been set")
+		return []byte{}, errors.New("attempt to issue command but uuid has not been set")
 	}
-	if _, err := out.Write(uuid_[:]); err != nil {
-		return err
-	}
-	commandBytes := []byte{commandCode}
-	if _, err := out.Write(commandBytes); err != nil {
-		return err
-	}
-	return writeBE(size, out)
+
+	ret := make([]byte, 0, 25+size)
+	ret = append(ret, uuid_[:]...)
+	ret = append(ret, commandCode)
+	sizeBytes := make([]byte, 8)
+	binary.BigEndian.PutUint64(sizeBytes, size)
+	return append(ret, sizeBytes...), nil
 }

@@ -1,7 +1,7 @@
 package clientlib
 
 import (
-	"bytes"
+	"encoding/binary"
 	"errors"
 	"github.com/adrianleh/WTMP-middleend/command"
 	"github.com/google/uuid"
@@ -60,20 +60,16 @@ func Register(name string) error {
 	go listen(recvSockListener)
 
 	size := uint64(4 + len(name) + len(recvSockPath))
-	bufInit := make([]byte, 0, 25+size)
-	out := bytes.NewBuffer(bufInit)
-	if err := writeCommandHeader(command.RegisterCommandId, size, out); err != nil {
-		return err
+	msg, headerErr := makeCommandHeader(command.RegisterCommandId, size)
+	if headerErr != nil {
+		return headerErr
 	}
-	if err := writeBE(uint32(len(name)), out); err != nil {
-		return err
-	}
-	if _, err := out.WriteString(name); err != nil {
-		return err
-	}
-	if _, err := out.WriteString(recvSockPath); err != nil {
-		return err
-	}
-	outBytes := out.Bytes()
-	return sendViaSocket(&outBytes)
+
+    nameLenBytes := make([]byte, 4)
+	binary.BigEndian.PutUint32(nameLenBytes, uint32(len(name)))
+	msg = append(msg, nameLenBytes...)
+	msg = append(msg, name...)
+	msg = append(msg, recvSockPath...)
+
+	return sendViaSocket(msg)
 }
