@@ -17,6 +17,11 @@ var recvConnCond = sync.NewCond(&recvConnLock)
 
 func sendViaSocket(data []byte) error {
 	c, sockErr := net.Dial("unix", svSockPath)
+	defer func() {
+		if c != nil {
+			var _ = c.Close()
+		}
+	}()
 	if sockErr != nil {
 		return sockErr
 	}
