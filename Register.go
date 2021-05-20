@@ -65,7 +65,7 @@ func Register(name string) error {
 		return headerErr
 	}
 
-    nameLenBytes := make([]byte, 4)
+	nameLenBytes := make([]byte, 4)
 	binary.BigEndian.PutUint32(nameLenBytes, uint32(len(name)))
 	msg = append(msg, nameLenBytes...)
 	msg = append(msg, name...)
