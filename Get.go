@@ -9,10 +9,7 @@ import (
 	"io"
 	"reflect"
 	"strings"
-	"sync"
 )
-
-var getLock sync.Mutex
 
 var typStr2RefTyp = map[string]reflect.Type{
 	"Char":    reflect.TypeOf(uint16(0)),
@@ -109,8 +106,8 @@ func Get(typ types.Type) (interface{}, error) {
 	}
 	msg = append(msg, typSer...)
 
-	getLock.Lock()
-	defer getLock.Unlock()
+	commLock.Lock()
+	defer commLock.Unlock()
 
 	if err := sendViaSocket(msg); err != nil {
 		return nil, err

@@ -14,6 +14,7 @@ var uuid_ = uuid.Nil
 var recvConn net.Conn = nil
 var recvConnLock = sync.Mutex{}
 var recvConnCond = sync.NewCond(&recvConnLock)
+var commLock = sync.Mutex{}
 
 func sendViaSocket(data []byte) error {
 	c, sockErr := net.Dial("unix", svSockPath)
