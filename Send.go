@@ -12,7 +12,7 @@ import (
 	"strings"
 )
 
-var type2Type = map[reflect.Kind]string{
+var refKind2TypPrefix = map[reflect.Kind]string{
 	reflect.Uint16:  "Char",
 	reflect.Int32:   "Int32",
 	reflect.Int64:   "Int64",
@@ -61,7 +61,7 @@ func castUnion(unionTyp types.UnionType, actTypName string) (types.Type, uint64,
 func serialize(typ types.Type, msg interface{}, out io.Writer) error {
 	msgKind := reflect.ValueOf(msg).Kind()
 	expTypName := typ.Name()
-	actTypName, isValidType := type2Type[msgKind]
+	actTypName, isValidType := refKind2TypPrefix[msgKind]
 	if !isValidType {
 		return errors.New("invalid msg type " + msgKind.String())
 	}
