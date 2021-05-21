@@ -71,5 +71,26 @@ func Register(name string) error {
 	msg = append(msg, name...)
 	msg = append(msg, recvSockPath...)
 
-	return sendViaSocket(msg)
+	commLock.Lock()
+	defer commLock.Unlock()
+
+	if err := sendViaSocket(msg); err != nil {
+		return err
+	}
+
+	recvConnLock.Lock()
+	for recvConn == nil {
+		recvConnCond.Wait()
+	}
+	recvConnLock.Unlock()
+
+	regSuccess := make([]byte, 1)
+	if _, err := recvConn.Read(regSuccess); err != nil {
+		return err
+	}
+	if regSuccess[0] == 0 {
+		return nil
+	} else {
+		return errors.New("middle-end rejected registration attempt")
+	}
 }
