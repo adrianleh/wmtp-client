@@ -40,19 +40,19 @@ func Register(name string) error {
 	}
 	uuid_ = uuid__
 
-	recvSockFile, fErr := ioutil.TempFile("", "wtmp-recv-socket")
+	recvSockDir, fErr := ioutil.TempDir("", "wtmp-recv-dir")
 	if fErr != nil {
 		return fErr
 	}
 	sigs := make(chan os.Signal, 1)
-	recvSockPath := recvSockFile.Name()
 	signal.Notify(sigs, syscall.SIGINT, syscall.SIGTERM)
 	go func() {
 		<-sigs
-		_ = os.Remove(recvSockPath)
+		_ = os.RemoveAll(recvSockDir)
 		os.Exit(0)
 	}()
 
+	recvSockPath := recvSockDir + "/sock"
 	recvSockListener, lErr := net.Listen("unix", recvSockPath)
 	if lErr != nil {
 		return lErr
