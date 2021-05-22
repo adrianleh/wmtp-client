@@ -74,7 +74,7 @@ func serializeArray(typ types.ArrayType, array_ interface{}, out io.Writer) erro
 	}
 	for i := 0; i < len_; i++ {
 		// TODO this may be unperformant, we may need to use unsafe
-		err := serialize(typ.Typ, arrayVal.Index(i), out)
+		err := serialize(typ.Typ, arrayVal.Index(i).Interface(), out)
 		if err != nil {
 			return err
 		}
