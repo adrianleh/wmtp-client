@@ -14,7 +14,7 @@ import (
 	"syscall"
 )
 
-var regLock sync.Mutex
+var regLock = &sync.Mutex{}
 
 func listen(listener net.Listener) {
 	conn, err := listener.Accept()
