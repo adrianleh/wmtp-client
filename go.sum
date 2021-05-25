@@ -4,5 +4,7 @@ github.com/adrianleh/WTMP-middleend v0.0.0-20210520043508-02ea998a8c96 h1:hrRaFk
 github.com/adrianleh/WTMP-middleend v0.0.0-20210520043508-02ea998a8c96/go.mod h1:g796wxcjnpyaFF32KXmWoMI4XvYnPCZw0sQ8W9ZL3x4=
 github.com/adrianleh/WTMP-middleend v0.0.0-20210520045830-874959fe8539 h1:dRBSWz8eDB0qh8UGUynwE8DW6CLlyzP9Z04VHZfQizg=
 github.com/adrianleh/WTMP-middleend v0.0.0-20210520045830-874959fe8539/go.mod h1:g796wxcjnpyaFF32KXmWoMI4XvYnPCZw0sQ8W9ZL3x4=
+github.com/adrianleh/WTMP-middleend v0.0.0-20210525225534-b9f24c469f72 h1:YmWPfxw/faWHkRm46TqwpTxB6oCf8hTnh+TQjxb/gJ8=
+github.com/adrianleh/WTMP-middleend v0.0.0-20210525225534-b9f24c469f72/go.mod h1:g796wxcjnpyaFF32KXmWoMI4XvYnPCZw0sQ8W9ZL3x4=
 github.com/google/uuid v1.2.0 h1:qJYtXnJRWmpe7m/3XlyhrsLrEURqHRM2kxzoxXqyUDs=
 github.com/google/uuid v1.2.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
