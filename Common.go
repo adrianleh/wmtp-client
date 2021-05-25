@@ -1,9 +1,11 @@
 package clientlib
 
 import (
+	"bytes"
 	"encoding/binary"
 	"errors"
 	"github.com/google/uuid"
+	"io"
 	"net"
 	"sync"
 )
@@ -15,18 +17,13 @@ var recvConn net.Conn = nil
 var recvConnLock = &sync.Mutex{}
 var recvConnCond = sync.NewCond(recvConnLock)
 var commLock = &sync.Mutex{}
+var c, sockErr = net.Dial("unix", svSockPath)
 
 func sendViaSocket(data []byte) error {
-	c, sockErr := net.Dial("unix", svSockPath)
-	defer func() {
-		if c != nil {
-			var _ = c.Close()
-		}
-	}()
 	if sockErr != nil {
 		return sockErr
 	}
-	_, sendErr := c.Write(data)
+	_, sendErr := io.Copy(c, bytes.NewReader(data))
 	return sendErr
 }
 
