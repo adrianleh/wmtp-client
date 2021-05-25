@@ -1,6 +1,7 @@
 package clientlib
 
 import (
+	"bufio"
 	"encoding/binary"
 	"errors"
 	"fmt"
@@ -122,5 +123,5 @@ func Get(typ types.Type) (interface{}, error) {
 	// TODO this isn't super safe - if we read too many or too few bytes,
 	//      then future gets will be all scrambled up.
 	//      We should probably check for this and panic if anything is untoward.
-	return deserialize(typ, recvConn)
+	return deserialize(typ, bufio.NewReaderSize(recvConn, 1024))
 }
